@@ -10,6 +10,7 @@ namespace My {
         using reference = type &;
         using difference_type = std::ptrdiff_t;
         using Iterator_ref = Iterator<type> &;
+        using const_Iterator_ref = const Iterator<type> &;
 
     private:
         // pointer to point data
@@ -22,8 +23,8 @@ namespace My {
         ~Iterator() = default;
 
         inline reference operator*() const { return *iterator; }
-        inline auto operator==(const Iterator_ref rhs) const { return this->iterator == rhs.iterator; }
-        inline auto operator!=(const Iterator_ref rhs) const { return !(this->iterator == rhs.iterator); }
+        inline auto operator==(const_Iterator_ref rhs) const { return this->iterator == rhs.iterator; }
+        inline auto operator!=(const_Iterator_ref rhs) const { return !(this->iterator == rhs.iterator); }
         inline Iterator_ref operator++() { ++iterator; return *this; }
         inline Iterator operator++(int) { Iterator tmp {iterator}; ++iterator; return tmp; }
         inline Iterator_ref operator--() { --iterator; return *this; }
