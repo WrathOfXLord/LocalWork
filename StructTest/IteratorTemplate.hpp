@@ -23,8 +23,8 @@ namespace My {
         ~Iterator() = default;
 
         inline reference operator*() const { return *iterator; }
-        inline auto operator==(const Iterator &rhs) const { return this->iterator == rhs.iterator; }
-        inline auto operator!=(const Iterator &rhs) const { return !(this->iterator == rhs.iterator); }
+        inline auto operator==(const Iterator_ref rhs) const { return this->iterator == rhs.iterator; }
+        inline auto operator!=(const Iterator_ref rhs) const { return !(this->iterator == rhs.iterator); }
         inline Iterator_ref operator++() { ++iterator; return *this; }
         inline Iterator operator++(int) { Iterator tmp {iterator}; ++iterator; return tmp; }
         inline Iterator_ref operator--() { --iterator; return *this; }
