@@ -1,0 +1,4 @@
+C:/Repository/C++/testqt/build/CMakeFiles/testqt.dir
+C:/Repository/C++/testqt/build/CMakeFiles/edit_cache.dir
+C:/Repository/C++/testqt/build/CMakeFiles/rebuild_cache.dir
+C:/Repository/C++/testqt/build/CMakeFiles/testqt_autogen.dir

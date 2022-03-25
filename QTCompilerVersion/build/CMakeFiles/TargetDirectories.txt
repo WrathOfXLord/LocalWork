@@ -1,0 +1,4 @@
+C:/Repository/C++/QTCompilerVersion/build/CMakeFiles/rebuild_cache.dir
+C:/Repository/C++/QTCompilerVersion/build/CMakeFiles/edit_cache.dir
+C:/Repository/C++/QTCompilerVersion/build/CMakeFiles/QTCompilerVersion.dir
+C:/Repository/C++/QTCompilerVersion/build/CMakeFiles/QTCompilerVersion_autogen.dir

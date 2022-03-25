@@ -1,0 +1,4 @@
+C:/Repository/C++/FirstGuiQT/build/CMakeFiles/rebuild_cache.dir
+C:/Repository/C++/FirstGuiQT/build/CMakeFiles/edit_cache.dir
+C:/Repository/C++/FirstGuiQT/build/CMakeFiles/FirstGuiQT.dir
+C:/Repository/C++/FirstGuiQT/build/CMakeFiles/FirstGuiQT_autogen.dir

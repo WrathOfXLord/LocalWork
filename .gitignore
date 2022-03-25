@@ -1,0 +1,16 @@
+# all executables
+*.exe
+
+# all linker and debug info files
+*.pdb
+*.ilk
+
+# vscode settings
+**/.vscode
+
+# all log files
+*.log
+
+# some custom files
+*.ini
+*.bat

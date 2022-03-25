@@ -1,0 +1,1 @@
+-IC:/Repository/C++/QTCompilerVersion/build -IC:/Repository/C++/QTCompilerVersion -IC:/Repository/C++/QTCompilerVersion/build/QTCompilerVersion_autogen/include -isystem C:/msys64/mingw64/include/QtCore -isystem C:/msys64/mingw64/share/qt5/mkspecs/win32-g++ -isystem C:/msys64/mingw64/include/QtGui -isystem C:/msys64/mingw64/include/QtWidgets
