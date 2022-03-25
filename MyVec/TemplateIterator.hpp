@@ -27,8 +27,6 @@ public:
 template<typename type>
 bool CustomIterator<type>::operator==(const CustomIterator &rhs) const
 {
-    //*this , dereferences the current object 
-    //but *(*this) firstly dereferences the current object then with overloaded * operator, dereferences this->ite
     return this->ite == rhs.ite;
 }
 
