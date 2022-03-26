@@ -15,4 +15,5 @@ int main() {
         std::cout << "value: " << val << "\n";
     }
 
+    return EXIT_SUCCESS;
 }
