@@ -12,6 +12,7 @@
 #include <list>
 #include <cmath>
 #include <set>
+#include "TimeCounter.hpp"
 
 
 // class xyz
@@ -38,6 +39,20 @@
 //   value = expectedVal;
 //   std::cout << "value inside the function: " << value << "\n";
 // }
+
+template <typename type>
+void swapByRef(type &first, type &second) {
+  type tmp {std::move(first)};
+  first = std::move(second);
+  second = std::move(tmp);
+}
+
+template <typename type>
+void swapByPtr(type *first, type *second) {
+  type ptr {*first};
+  *first = *second;
+  *second = ptr;
+}
 
 int main(int argc, char** argv)
 {
@@ -113,7 +128,32 @@ int main(int argc, char** argv)
   //   std::cout << "vector is not initialised\n";
   // }
 
-  std::cout << "hello world\n";
+  int x {3}, y {4};
+  
+  TimeCounter t1;
+  
+  // for(size_t i {}; i != 9'999'999; ++i) {
+  //   swapByRef(x, y);
+  // }
+  // t1.timedelta();
+  // std::cout << "x: " << x << ", y: " << y << "\n";
+
+  for(size_t i {}; i != 9'999'999; ++i) {
+    swapByPtr(&x, &y);
+  }
+  t1.timedelta();
+  std::cout << "x: " << x << ", y: " << y << "\n";
+  
+  int *arr {new int[5] {3, 4, 5, 6, 7}};
+  int *arrtmp {arr};
+  std::cout << "address of arr: " << arr << ", arrtmp: " << arrtmp << "\n";
+  arr = new int [5] {8, 9, 10, 11, 12};
+  std::cout << "address of arr: " << arr << ", arrtmp: " << arrtmp << "\n";
+  delete [] arr;
+  delete [] arrtmp;
+
+  char arrC[] {"hello"};
+  std::cout << "size of char arr: " << sizeof(arrC) << "\n";  //normal string + 1 for null termination
   
   return 0;
 }
