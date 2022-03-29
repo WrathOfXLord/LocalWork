@@ -76,6 +76,7 @@ public:
     void print(size_t rank) const;
     std::ostream &print(std::ostream &out, size_t rank) const;
     bool fit_to_shrink();
+    void reserve(size_t size);
 
     CustomIterator<type> begin() noexcept { return CustomIterator {this->collection}; }
     CustomIterator<type> end() noexcept { return CustomIterator {this->collection + this->_sizeVec}; }
@@ -197,50 +198,46 @@ template<typename type> type &MyTemplateVec<type>::operator[](size_t index)
 //add lvalue elements to the end
 template<typename type> void MyTemplateVec<type>::push_back(const type &val)
 {
-    if(this->collection == nullptr) {
+    if(this->_capacity == 0) {
         ++this->_sizeVec;
         this->_capacity = 3 * this->_sizeVec;
-        this->collection = new type[this->_capacity];
+        this->collection = new type[this->_capacity] {};
         this->collection[0] = val;
     } else if(this->_sizeVec + 1 <= this->_capacity) {
         this->collection[this->_sizeVec] = val;
         ++this->_sizeVec;
     } else {
         type *tempCollection {this->collection};
-        this->collection = new type[2 * (this->_sizeVec + 1)];
+        this->collection = new type[2 * (this->_sizeVec + 1)] {};
         for(size_t i {}; i < this->_sizeVec; ++i)
             this->collection[i] = std::move(tempCollection[i]);
         delete [] tempCollection;
         this->collection[this->_sizeVec] = val;
         ++this->_sizeVec;
         this->_capacity = 2 * this->_sizeVec;
-        for(size_t i {this->_sizeVec}; i < this->_capacity; ++i)
-            this->collection[i] = std::move(type {});
     }
 }
 
 //add rvalue elements to the end
 template<typename type> void MyTemplateVec<type>::push_back(type &&val)
 {
-    if(this->collection == nullptr) {
+    if(this->_capacity == 0) {
         ++this->_sizeVec;
         this->_capacity = 3 * this->_sizeVec;
-        this->collection = new type[this->_capacity];
+        this->collection = new type[this->_capacity] {};
         this->collection[0] = std::move(val);
     } else if(this->_sizeVec + 1 <= this->_capacity) {
         this->collection[this->_sizeVec] = std::move(val);
         ++this->_sizeVec;
     } else {
         type *tempCollection {this->collection};
-        this->collection = new type[2 * (this->_sizeVec + 1)];
+        this->collection = new type[2 * (this->_sizeVec + 1)] {};
         for(size_t i {}; i < this->_sizeVec; ++i)
             this->collection[i] = std::move(tempCollection[i]);
         delete [] tempCollection;
         this->collection[this->_sizeVec] = std::move(val);
         ++this->_sizeVec;
         this->_capacity = 2 * this->_sizeVec;
-        for(size_t i {this->_sizeVec}; i < this->_capacity; ++i)
-            this->collection[i] = std::move(type {});
     }
 }
 
@@ -288,7 +285,7 @@ template <typename type> void MyTemplateVec<type>::print(size_t rank) const
     if(rank >= _sizeVec)
         throw RankOutOfBoundsException {};
     if(this->_sizeVec == 0){
-        std::cerr << "Vector contains no data" << std::endl;
+        std::cerr << "Vector contains no data\n";
         return;
     }
     std::cout << "[" << this->collection[rank] << "]";
@@ -300,7 +297,7 @@ template <typename type> std::ostream &MyTemplateVec<type>::print(std::ostream &
     if(rank >= _sizeVec)
         throw RankOutOfBoundsException {};
     if(this->_sizeVec == 0){
-        std::cerr << "Vector contains no data" << std::endl;
+        std::cerr << "Vector contains no data\n";
         return out;
     }
     out << "[" << this->collection[rank] << "]";
@@ -319,4 +316,25 @@ template <typename type> bool MyTemplateVec<type>::fit_to_shrink() {
     _capacity = _sizeVec;
     delete [] tmp;
     return true;
+}
+
+template <typename type> void MyTemplateVec<type>::reserve(size_t size) {
+    if(size <= this->_sizeVec)
+        return;
+    
+    if(size <= this->_capacity)
+        this->_sizeVec = size;
+    else {
+        type *tmp {this->collection};
+        this->collection = new type[size * 2] {};
+        if(tmp != nullptr) {
+            for(size_t index {}; index != this->_sizeVec; ++index) {
+                this->collection[index] = std::move(tmp[index]);
+            }
+            delete [] tmp;
+        }
+
+        this->_sizeVec = size;
+        this->_capacity = size * 2;
+    }
 }

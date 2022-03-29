@@ -1,6 +1,7 @@
 #include "MyTemplateVec.hpp"
 #include "Exceptions.hpp"
 #include "TemplateQSort_implement.hpp"
+#include "TimeCounter.hpp"
 #include <iostream>
 #include <string>
 #include <vector>
@@ -40,8 +41,8 @@ int main()
 	// // timer t1 {std::chrono::high_resolution_clock:: now()};
 	// // timer t3 {std::chrono::high_resolution_clock:: now()};
 	
-	MyTemplateVec<std::string> newVec;
-	MyTemplateVec<std::string> anotherVec {newVec};
+	// MyTemplateVec<std::string> newVec;
+	// MyTemplateVec<std::string> anotherVec {newVec};
 	// newVec.push_back("ali firat");
 	// newVec.push_back("rahime");
 	// newVec.push_back("nisa");
@@ -217,15 +218,44 @@ int main()
 	// std::cout << "Elapsed time: " << std::fixed << std::chrono::duration_cast<std::chrono::duration<double>>(time_point_2 - time_point_1).count() << "\n";
 
 
-	std::string testStr {"test str"};
-	MyTemplateVec<std::string> stringVectorTest {"hey there", "what are you waiting for", "hello world", "i am coming", "on my way", std::move(testStr)};
-	std::cout << "teststr: " << testStr << ", vec element: " << *(stringVectorTest.end() - 1) << "\n";
-	std::cout << stringVectorTest << ", size: " << stringVectorTest.size() << ", cap: " << stringVectorTest.capacity() << "\n";
-	MyTemplateVec<std::string> emptyStringVector {};
-	stringVectorTest.swap(emptyStringVector);
-	std::cout << emptyStringVector << "\n";
-	std::cout << "size of vec: " << emptyStringVector.size() << "\n";
-	QSort(emptyStringVector, 0, emptyStringVector.size() - 1);
-	std::cout << emptyStringVector << "\n";
+	// std::string testStr {"test str"};
+	// MyTemplateVec<std::string> stringVectorTest {"hey there", "what are you waiting for", "hello world", "i am coming", "on my way", std::move(testStr)};
+	// std::cout << "teststr: " << testStr << ", vec element: " << *(stringVectorTest.end() - 1) << "\n";
+	// std::cout << stringVectorTest << ", size: " << stringVectorTest.size() << ", cap: " << stringVectorTest.capacity() << "\n";
+	// MyTemplateVec<std::string> emptyStringVector {};
+	// stringVectorTest.swap(emptyStringVector);
+	// std::cout << emptyStringVector << "\n";
+	// std::cout << "size of vec: " << emptyStringVector.size() << "\n";
+	// QSort(emptyStringVector, 0, emptyStringVector.size() - 1);
+	// std::cout << emptyStringVector << "\n";
+
+
+	MyTemplateVec<std::string> vecStrReserve {300};
+	std::cout << "size of vecstr: " << vecStrReserve.size() << ", capacity: " << vecStrReserve.capacity() << "\n";
+	TimeCounter t1 {};
+	vecStrReserve.reserve(590);
+	std::cout << "size of vecstr: " << vecStrReserve.size() << ", capacity: " << vecStrReserve.capacity() << "\n";
+	vecStrReserve.reserve(610);
+	// t1.timedelta();
+	std::cout << "size of vecstr: " << vecStrReserve.size() << ", capacity: " << vecStrReserve.capacity() << "\n";
+
+	MyTemplateVec<std::string> mytstVc;
+	std::cout << "\nmytstVc: " << mytstVc << "\n";
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	mytstVc.push_back("hey there");
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	mytstVc.push_back("abc");
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	mytstVc.push_back("def");
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	mytstVc.push_back("ghi");
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	std::cout << "\nmytstVc: " << mytstVc << "\n";
+	std::cout << "Element " << mytstVc.pop_back() << " has been removed.\n";
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	std::cout << "mytstVc: " << mytstVc << "\n";
+	mytstVc.reserve(11);
+	std::cout << "size of mytstVc: " << mytstVc.size() << ", capacity: " << mytstVc.capacity() << "\n";
+	std::cout << "mytstVc: " << mytstVc << "\n";
 	return 0;
 }
