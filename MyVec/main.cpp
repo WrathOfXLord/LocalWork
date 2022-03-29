@@ -11,6 +11,7 @@
 using timer = std::chrono::high_resolution_clock::time_point;
 using int64 = long long int;
 
+// gcc warns about overloading delete operators !!
 
 void *operator new(std::size_t size) {
   std::cout << "Allocating " << size << " bytes of memory\n";
@@ -28,47 +29,53 @@ void *operator new[](std::size_t size) {
 }
 
 void operator delete[](void *memory, std::size_t size) {
-  std::cout << "Releasing " << size << "bytes of memory\n";
+  std::cout << "Releasing " << size << " bytes of memory\n";
   std::free(memory);
 }
 
 
 int main()
 {
-	setlocale(LC_ALL, "Turkish");
+	// setlocale(LC_ALL, "Turkish");
 	// // timer t1 {std::chrono::high_resolution_clock:: now()};
 	// // timer t3 {std::chrono::high_resolution_clock:: now()};
-	// MyTemplateVec<std::string> newVec;
-	// MyTemplateVec<std::string> anotherVec {newVec};
+	
+	MyTemplateVec<std::string> newVec;
+	MyTemplateVec<std::string> anotherVec {newVec};
 	// newVec.push_back("ali firat");
 	// newVec.push_back("rahime");
 	// newVec.push_back("nisa");
 	// newVec.push_back("merve");
 	// newVec.push_back("linda");
-	// // timer t4 {std::chrono::high_resolution_clock:: now()};
-	// // // std::cout << newVec.pop_back() << " is removed" << std::endl;
+	// // // timer t4 {std::chrono::high_resolution_clock:: now()};
+	// std::cout << "before delete: " << newVec << "\n";
+	// std::cout << newVec.pop_back() << " has been removed" << std::endl;
+	// std::cout << "after delete: " << newVec << "\n";
+	// std::cout << "another: " << anotherVec << "\n";
 
-	// //std::cout << "\nlast element was: " << newVec.pop_back() << " and removed" << std::endl;
+	// //std::cout << "\nlast element was: " << newVec.pop_back() << " and has been removed" << std::endl;
 	// MyTemplateVec<std::string> copyVec;
 	// copyVec = newVec;
 	// std::cout << std::endl << "original vec: \n" << newVec << std::endl;
 	// std::cout << std::endl << "copy vec: \n" << copyVec << std::endl;
 	// std::cout << "size of newVec is : " << newVec.size() << std::endl;
-	// std::cout << "last element is : " << newVec[4] << std::endl;
+	// std::cout << "last element is : " << newVec[3] << std::endl;
 	// std::cout << "last element is : ";
-	// newVec.print(5);
+	// newVec.print(3);
 	// std::cout << std::endl;
-	// newVec.print(std::cout, 4);
+	// newVec.print(std::cout, 3);
 	// std::cout << std::endl;
 	// //test line
 	// MyTemplateVec<int> test {2};
 	// test.push_back(12);
 	// for(size_t i {}; i < test.size(); ++i)
-	//     std::cout << "test: " << test[i];
-	// std::cout << std::endl;
+	//     std::cout << "test[" << i << "]: " << test[i] << "  ";
+	// std::cout << "\n";
 
 	// int x {int {}};
 	// std::cout << "x is : " << x << std::endl;
+
+	// MyTemplateVec<std::string> stringTestVec {std::string {"heyyo there"}};
 
 	// //original vector
 	// std::vector<std::string> test2;
@@ -92,12 +99,13 @@ int main()
 	// std::cout << "-----------------------------------------------------" << std::endl;
 	// for(CustomIterator<std::string> i {newVec.begin()}; i != newVec.end(); ++i)
 	//     std::cout << *i << std::endl;
-
-	// MyTemplateVec<std::string> anew {"there", "how", "are", "you"};
+	// std::string tryStr {"342212"};
+	// std::cout << "1- tryStr val: " << tryStr << "\n";
+	// MyTemplateVec<std::string> anew {tryStr, "there", "how", std::move(tryStr), "you"};
 	// std::cout << anew << std::endl;
 	// for(size_t i {0}; i < anew.size(); ++i)
 	//     std::cout << anew[i] << std::endl;
-
+	// std::cout << "2- tryStr val: " << tryStr << "\n";
 	// MyTemplateVec intlist {5, 6, 7, 8, 9, int {5}}; //type deduction, no need to give the type name.
 	// for(const auto &i:intlist)
 	//     std::cout << i << std::endl;
@@ -109,7 +117,7 @@ int main()
 	// stringVector.push_back("ello govnar");
 	// stringVector.push_back(xy);
 	// std::cout << stringVector << std::endl;
-	// std::cout << "last element was : " << stringVector.pop_back() << " and removed" << std::endl;
+	// std::cout << "last element was : " << stringVector.pop_back() << " and has been removed" << std::endl;
 	// std::cout << stringVector << std::endl;
 
 	// for(const std::string &printS:stringVector)
@@ -212,11 +220,12 @@ int main()
 	std::string testStr {"test str"};
 	MyTemplateVec<std::string> stringVectorTest {"hey there", "what are you waiting for", "hello world", "i am coming", "on my way", std::move(testStr)};
 	std::cout << "teststr: " << testStr << ", vec element: " << *(stringVectorTest.end() - 1) << "\n";
+	std::cout << stringVectorTest << ", size: " << stringVectorTest.size() << ", cap: " << stringVectorTest.capacity() << "\n";
 	MyTemplateVec<std::string> emptyStringVector {};
-	// stringVectorTest.swap(emptyStringVector);
-	// std::cout << emptyStringVector << "\n";
-	// std::cout << "size of vec: " << emptyStringVector.size() << "\n";
-	// QSort(emptyStringVector, 0, emptyStringVector.size() - 1);
-	// std::cout << emptyStringVector << "\n";
+	stringVectorTest.swap(emptyStringVector);
+	std::cout << emptyStringVector << "\n";
+	std::cout << "size of vec: " << emptyStringVector.size() << "\n";
+	QSort(emptyStringVector, 0, emptyStringVector.size() - 1);
+	std::cout << emptyStringVector << "\n";
 	return 0;
 }
