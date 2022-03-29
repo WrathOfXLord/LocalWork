@@ -22,6 +22,10 @@ template <typename type> class MyTemplateVec {
         return streamlhs;
     }
 
+    // //might be needed for sfinae
+    // template<typename... types>
+    // using AllSame = std::enable_if_t<std::conjunction_v<std::is_same<type, types>...>>;
+
 private:
     size_t _sizeVec;
     size_t _capacity;
@@ -33,7 +37,29 @@ public:
     MyTemplateVec(size_t _sizeVec, const type &init);
     MyTemplateVec(const MyTemplateVec &source);
     MyTemplateVec(MyTemplateVec &&source);
-    template<typename ...types> MyTemplateVec(type &&arg1, types &&... args);
+
+    // multi args constructor start
+    // first type is already initialised so we need to overload variadic constructor
+    // calling constructor with only parameter pack causes some strange errors
+    template<typename ...types> MyTemplateVec(type &&arg1, types &&... args)
+    try: _sizeVec {sizeof...(args) + 1}, _capacity {2 * (_sizeVec)}, collection {new type[_capacity] {std::move(arg1), std::forward<types>(args)...}}
+    {
+
+    } catch(const std::bad_alloc &ex) {
+        std::cerr << "Memory Allocation Failure. Terminating...\n";
+        throw std::bad_alloc(); 
+    }
+
+    template<typename ...types> MyTemplateVec(const type &arg1, types &&... args)
+    try: _sizeVec {sizeof...(args) + 1}, _capacity {2 * (_sizeVec)}, collection {new type[_capacity] {arg1, std::forward<types>(args)...}}
+    {
+
+    } catch(const std::bad_alloc &ex) {
+        std::cerr << "Memory Allocation Failure. Terminating...\n";
+        throw std::bad_alloc(); 
+    }
+
+    // multi args constructor end
 
     ~MyTemplateVec();
 
@@ -56,25 +82,12 @@ public:
     
 };
 
-//variadic constructor for multiple argument initialisation via universal reference
-template<typename type> template<typename ...types> MyTemplateVec<type>::MyTemplateVec(type &&arg1, types &&... args)
-try: _sizeVec {sizeof...(args) + 1}, _capacity {2 * (_sizeVec)}, collection {new type[_capacity] {arg1, std::forward<types>(args)...}}
-{
-
-} catch(const std::bad_alloc &ex) {
-    std::cerr << "Memory Allocation Failure. Terminating...\n";
-    throw std::bad_alloc(); 
-}
-
 
 //default constructor
 template <typename type> MyTemplateVec<type>::MyTemplateVec()
-try: _sizeVec {0}, _capacity {2}, collection {new type [_capacity] {}}
+: _sizeVec {0}, _capacity {0}, collection {nullptr}
 {
 
-} catch(const std::bad_alloc &ex) {
-    std::cerr << "Memory Allocation Failure. Terminating...\n";
-    throw std::bad_alloc(); 
 }
 
 //constructor with size
@@ -116,7 +129,7 @@ try: _sizeVec {source._sizeVec}, _capacity {source._capacity}, collection {new t
             continue;
         }
         
-        this->collection[i] = type {};
+        this->collection[i] = std::move(type {});
     }
 } catch(const std::bad_alloc &ex) {
     std::cerr << "Memory Allocation Failure. Terminating...\n";
@@ -184,42 +197,50 @@ template<typename type> type &MyTemplateVec<type>::operator[](size_t index)
 //add lvalue elements to the end
 template<typename type> void MyTemplateVec<type>::push_back(const type &val)
 {
-    if(this->_sizeVec + 1 < this->_capacity)
-    {
+    if(this->collection == nullptr) {
+        ++this->_sizeVec;
+        this->_capacity = 3 * this->_sizeVec;
+        this->collection = new type[this->_capacity];
+        this->collection[0] = val;
+    } else if(this->_sizeVec + 1 <= this->_capacity) {
         this->collection[this->_sizeVec] = val;
         ++this->_sizeVec;
     } else {
         type *tempCollection {this->collection};
         this->collection = new type[2 * (this->_sizeVec + 1)];
         for(size_t i {}; i < this->_sizeVec; ++i)
-            this->collection[i] = tempCollection[i];
+            this->collection[i] = std::move(tempCollection[i]);
         delete [] tempCollection;
         this->collection[this->_sizeVec] = val;
         ++this->_sizeVec;
         this->_capacity = 2 * this->_sizeVec;
         for(size_t i {this->_sizeVec}; i < this->_capacity; ++i)
-            this->collection[i] = type {};
+            this->collection[i] = std::move(type {});
     }
 }
 
 //add rvalue elements to the end
 template<typename type> void MyTemplateVec<type>::push_back(type &&val)
 {
-    if(this->_sizeVec + 1 < this->_capacity)
-    {
+    if(this->collection == nullptr) {
+        ++this->_sizeVec;
+        this->_capacity = 3 * this->_sizeVec;
+        this->collection = new type[this->_capacity];
+        this->collection[0] = std::move(val);
+    } else if(this->_sizeVec + 1 <= this->_capacity) {
         this->collection[this->_sizeVec] = std::move(val);
         ++this->_sizeVec;
     } else {
         type *tempCollection {this->collection};
         this->collection = new type[2 * (this->_sizeVec + 1)];
         for(size_t i {}; i < this->_sizeVec; ++i)
-            this->collection[i] = tempCollection[i];
+            this->collection[i] = std::move(tempCollection[i]);
         delete [] tempCollection;
         this->collection[this->_sizeVec] = std::move(val);
         ++this->_sizeVec;
         this->_capacity = 2 * this->_sizeVec;
         for(size_t i {this->_sizeVec}; i < this->_capacity; ++i)
-            this->collection[i] = type {};
+            this->collection[i] = std::move(type {});
     }
 }
 
@@ -229,26 +250,9 @@ template <typename type> type MyTemplateVec<type>::pop_back()
     if(_sizeVec == 0)
         throw EmptyVectorException {};
     
-    type temp {this->collection[_sizeVec - 1]};
-    this->collection[_sizeVec - 1] = type {};
+    type temp {std::move(this->collection[_sizeVec - 1])};
+    this->collection[_sizeVec - 1] = std::move(type {});
     --this->_sizeVec;
-    
-    if(3 * this->_sizeVec + 1 < this->_capacity)
-    {
-        type *tempCollection {this->collection};
-        this->collection = new type [2 * this->_sizeVec];
-        for(size_t i {}; i != 2 * this->_sizeVec; ++i)
-        {
-            if(i != this->_sizeVec)
-            {
-                this->collection[i] = tempCollection[i];
-                continue;
-            }
-            this->collection[i] = type {};
-        }
-        this->_capacity = 2 * _sizeVec;
-        delete [] tempCollection;
-    }
     return temp;
 }
 
@@ -301,4 +305,18 @@ template <typename type> std::ostream &MyTemplateVec<type>::print(std::ostream &
     }
     out << "[" << this->collection[rank] << "]";
     return out;
+}
+
+template <typename type> bool MyTemplateVec<type>::fit_to_shrink() {
+    if(_capacity == _sizeVec) {
+        return false;
+    }
+    type *tmp {this->collection};
+    collection = new type[this->_sizeVec];
+    for(size_t index {}; index != _sizeVec; ++index) {
+        collection = std::move(tmp[index]); 
+    }
+    _capacity = _sizeVec;
+    delete [] tmp;
+    return true;
 }
