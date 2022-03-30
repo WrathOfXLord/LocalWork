@@ -7,17 +7,20 @@
 
 using std::chrono::time_point;
 
+// When the object is constructed, the timer starts.
 struct TimeCounter {
     time_point<std::chrono::steady_clock> start, last_used;
     std::chrono::duration<double> duration;
     TimeCounter()
     : start {std::chrono::steady_clock::now()}, last_used {} {}
 
+    // resets start point and last used point
     void restart_timer() {
         start = std::chrono::steady_clock::now();
         last_used = time_point<std::chrono::steady_clock> {};
     }
 
+    // if restart_timer is not used before timedelta, then the timer counts the time from the construction moment
     void timedelta() {
         last_used = std::chrono::steady_clock::now();
         duration = last_used - start;
