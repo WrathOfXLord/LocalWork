@@ -20,15 +20,15 @@ namespace My {
         uint64_t index {};
         short sign {1};
         int64_t value {0};
-        bool bit {};
+        bool signMark {};
 
         if(str[0] == '-') {
             sign = -1;
             ++index;
-            bit = true;
+            signMark = true;
         } else if(str[0] == '+') {
             ++index;
-            bit = true;
+            signMark = true;
         }
 
         for(; str[index] >= '0' && str[index] <= '9'; ++index) {
@@ -36,9 +36,9 @@ namespace My {
         }
 
         if(value == 0) {
-            if(!bit && index == 0)
+            if(!signMark && index == 0)
                 throw InvalidInputException {};
-            else if (bit && index == 1) {
+            else if (signMark && index == 1) {
                 throw InvalidInputException {};
             }
         }
