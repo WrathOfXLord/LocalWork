@@ -87,6 +87,7 @@ void validateInputUsingCustomAtoLL(int64_t &var) {
             std::cout << "Please enter an integer value: ";
             std::cin >> buffer;
             TimeCounter t;
+            // tested out and works faster than std::atoll also throws exception if it fails
             var = My::AtoLL(buffer);
             t.timedelta();
 
