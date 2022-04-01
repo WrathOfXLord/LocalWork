@@ -37,7 +37,7 @@ protected:
     string name;
 
 public:
-    string getName() const { return name; }
+    const string &getName() const { return name; }
     Account(string name = "empty") : name {name} {}
     virtual void withdraw(double amount) { cout << "In Account::withdraw " << endl; }
     virtual ~Account() {};

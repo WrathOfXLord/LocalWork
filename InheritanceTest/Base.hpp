@@ -18,9 +18,9 @@ public:
     
     Base()  :belongsToBase {"private base"}, protectedFromOutside {"protected base"}, freeForAll {"public base"} {}
 
-    string getPrivateAsPublic() const { return belongsToBase; }
-    string getProtectedAsPublic() const { return  protectedFromOutside; }
-    string getPublicAsPublic() const { return freeForAll; } //unnecessary, public data can be accessed anywhere.
+    const string &getPrivateAsPublic() const { return belongsToBase; }
+    const string &getProtectedAsPublic() const { return  protectedFromOutside; }
+    const string &getPublicAsPublic() const { return freeForAll; } //unnecessary, public data can be accessed anywhere.
 
 
 };

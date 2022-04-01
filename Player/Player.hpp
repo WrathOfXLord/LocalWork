@@ -21,7 +21,7 @@ private:
 public:
     //implicitly inline methods, because we are defining them inside class declaration
     //inline methods are small optimized methods
-    string getName() const { return name; }
+    const string &getName() const { return name; }
     void setName(string name) { this->name = name; }
 
     int getXp() const { return xp; }

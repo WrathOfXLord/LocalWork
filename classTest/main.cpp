@@ -9,7 +9,7 @@ public:
     Player(string any);
     
     //getter and setters
-    string getName();
+    const string &getName() const;
     void setName(string any);   // bool OK too
 
 private:    
@@ -25,12 +25,14 @@ private:
 int main()
 {
     Player ali("ali");
+    
     Player hero("batman");
     cout << "name of second player is : " << hero.getName() << endl;
 
     cout << "Please enter the name you want to be replaced with the old one : ";
     string NewName;
     cin >> NewName;
+    std::string ref {hero.getName()};
     hero.setName(NewName);
     cout << "New name is now : " << hero.getName() << endl;
     return 0;
@@ -42,7 +44,7 @@ Player::Player(string any)
 
 }
 
-string Player::getName()
+const string &Player::getName() const
 {
     return name;
 }

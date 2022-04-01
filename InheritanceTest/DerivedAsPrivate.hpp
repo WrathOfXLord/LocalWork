@@ -9,8 +9,8 @@ protected:
 
 public:
     DerivedAsPrivate() : newAsPrivate {"newAsPrivate"} {}
-    string getNewAsPrivate() const { return newAsPrivate; }
-    string getPrivateAsPrivate() const { return getPrivateAsPublic(); }
-    string getProtectedAsPrivate() const { return  getProtectedAsPublic(); }
-    string getPublicAsPrivate() const { return getPublicAsPublic(); }
+    const string &getNewAsPrivate() const { return newAsPrivate; }
+    const string &getPrivateAsPrivate() const { return getPrivateAsPublic(); }
+    const string &getProtectedAsPrivate() const { return  getProtectedAsPublic(); }
+    const string &getPublicAsPrivate() const { return getPublicAsPublic(); }
 };

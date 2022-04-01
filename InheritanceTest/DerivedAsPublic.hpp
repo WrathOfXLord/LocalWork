@@ -9,6 +9,6 @@ protected:
 
 public:
     DerivedAsPublic() : newAsPublic {"newAsPublic"} {}
-    string getNewAsPublic() const { return newAsPublic; }
+    const string &getNewAsPublic() const { return newAsPublic; }
 
 };
