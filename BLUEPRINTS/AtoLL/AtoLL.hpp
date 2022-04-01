@@ -6,7 +6,7 @@
 
 namespace My {
 
-    class InvalidInputException: std::exception {
+    class InvalidInputException: public std::exception {
     public:
         virtual const char *what() const noexcept override {
             return "Invalid Input For AtoLL Function";
