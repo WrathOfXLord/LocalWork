@@ -18,7 +18,7 @@ namespace My {
 
     int64_t AtoLL(const char *str) {
         uint64_t index {};
-        char sign {1};
+        int64_t sign {1};
         int64_t value {0};
         bool signUsed {};
 
