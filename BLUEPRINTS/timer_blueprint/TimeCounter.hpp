@@ -21,10 +21,10 @@ struct TimeCounter {
     }
 
     // if restart_timer is not used before timedelta, then the timer counts the time from the construction moment
-    void timedelta() {
+    void timedelta(std::ostream &out=std::cout) {
         last_used = std::chrono::steady_clock::now();
         duration = last_used - start;
-        std::cout << "Elapsed time: " << std::setprecision(8) << std::fixed 
+        out << "Elapsed time: " << std::setprecision(8) << std::fixed 
             << duration.count() << std::scientific << " (" << std::setprecision(4)
             << duration.count() << ") seconds." << "\n";
     }
