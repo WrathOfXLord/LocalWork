@@ -5,8 +5,12 @@
 *.pdb
 *.ilk
 
-# vscode settings
-**/.vscode
+# vscode settings should not be ignored
+
+#old config files
+**/config
+
+**/CSV
 
 # all log files
 *.log
@@ -17,3 +21,4 @@
 
 # some other test locals
 **/RSATest
+**/ConsoleSnake
