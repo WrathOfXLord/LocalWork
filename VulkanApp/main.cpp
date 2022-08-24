@@ -30,14 +30,21 @@ static AllocationStats memStats{};
 
 void *operator new(std::size_t size)
 {
-    std::cout << "Allocated " << size << " bytes of memory.\n";
+    // std::cout << "Allocated " << size << " bytes of memory.\n";
     memStats.allocated += size;
     return std::malloc(size);
 }
 
 void operator delete(void *memory, std::size_t size)
 {
-    std::cout << "Released " << size << " bytes of memory.\n";
+    // std::cout << "Released " << size << " bytes of memory.\n";
+    memStats.released += size;
+    std::free(memory);
+}
+
+void operator delete[](void *memory, std::size_t size)
+{
+    // std::cout << "Released " << size << " bytes of memory.\n";
     memStats.released += size;
     std::free(memory);
 }
@@ -51,6 +58,7 @@ int main()
         return EXIT_FAILURE;
 
 
+    // memory usage status
     bool isClosed{};
     std::thread t1{[&isClosed]() {
         do {

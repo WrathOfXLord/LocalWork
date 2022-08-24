@@ -69,7 +69,7 @@ void VulkanRenderer::createInstance() {
     }
 
     // Check instance extensions supported
-    if(!checkInstanceExtensionSupport(&instanceExtensions))
+    if(!checkInstanceExtensionSupport(instanceExtensions))
         throw std::runtime_error {"VkInstance does not support required extensions"};
     
     createInfo.enabledExtensionCount = static_cast<uint32_t>(instanceExtensions.size());
@@ -90,7 +90,7 @@ void VulkanRenderer::createInstance() {
 }
 
 // Check if GLFW extensions are supported by Vulkan instance or not
-bool VulkanRenderer::checkInstanceExtensionSupport(std::vector<const char *> *checkExtensions) {
+bool VulkanRenderer::checkInstanceExtensionSupport(const std::vector<const char *> &checkExtensions) {
     // need to get number of extensions to create array of correct size to hold extensions
     uint32_t extensionCount {0};
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, nullptr);
@@ -100,9 +100,10 @@ bool VulkanRenderer::checkInstanceExtensionSupport(std::vector<const char *> *ch
     vkEnumerateInstanceExtensionProperties(nullptr, &extensionCount, extensions.data());
 
     // Check if given extensions are in list of available extensions
-    for(const auto &checkExt:*checkExtensions) {
+    for(const auto &checkExt:checkExtensions) {
         bool hasExtension {false};
         for(const auto &ext:extensions) {
+            // std::cout << "Extension: " << ext.extensionName << "\n";
             if(std::strcmp(checkExt, ext.extensionName) == 0) {
                 hasExtension = true;
                 break;
@@ -169,24 +170,27 @@ void VulkanRenderer::getPhysicalDevice() {
     std::vector<VkPhysicalDevice> deviceList(deviceCount);
     vkEnumeratePhysicalDevices(instance, &deviceCount, deviceList.data());
 
-    for(const auto &device: deviceList) {
-        if(checkDeviceSuitable(device)) {
-            mainDevice.physicalDevice = device;
-            break;
+    {
+        int highestScore {};
+        for(const auto &device: deviceList) {
+            // to use the most suitable device evaluates device suitability
+            int deviceScore {ratePhysicalDeviceSuitability(device)};
+            if(isPhysicalDeviceSuitable(device) && deviceScore > highestScore) {
+                mainDevice.physicalDevice = device;
+                std::cout << "score : " << deviceScore << "\n";
+                highestScore = deviceScore;
+            }
         }
     }
+
+    // If no physical device is assigned, then no suitable device.
+    if(mainDevice.physicalDevice == VK_NULL_HANDLE)
+        throw std::runtime_error {"Failed to find a suitable physical device"};
 }
 
 // Check the given device is suitable for Vulkan instance or not
 // First, check if there are any graphics queue and presentation queue (can be the same queue), then check device's extension support and lastly, check Swap Chain support
-bool VulkanRenderer::checkDeviceSuitable(VkPhysicalDevice device) {
-    // // Information about the device itself (Id, name, type, vendor, etc.)
-    // VkPhysicalDeviceProperties deviceProperties;
-    // vkGetPhysicalDeviceProperties(device, &deviceProperties);
-
-    // // Information about what the device can do (geo shader, tessalation shader, wide lines, etc.)
-    // VkPhysicalDeviceFeatures deviceFeatures;
-    // vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+bool VulkanRenderer::isPhysicalDeviceSuitable(VkPhysicalDevice device) {
     QueueFamilyIndices indices {getQueueFamillies(device)};
 
     // after getting queue famillies check if given extensions are supported or not
@@ -204,6 +208,37 @@ bool VulkanRenderer::checkDeviceSuitable(VkPhysicalDevice device) {
     }
 
     return indices.isValid() && extensionSupported && swapChainValid;
+}
+
+// Rates the given device according to its capabilities and returns a score for the device
+int VulkanRenderer::ratePhysicalDeviceSuitability(VkPhysicalDevice device) {
+
+    // Information about the device itself (Id, name, type, vendor, etc.)
+    VkPhysicalDeviceProperties deviceProperties;
+    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+
+    // Information about what the device can do (geo shader, tessalation shader, wide lines, etc.)
+    VkPhysicalDeviceFeatures deviceFeatures;
+    vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+    std::cout << "device info: " << deviceProperties.deviceID << " - " << deviceProperties.deviceName << "\n";
+
+    // Application can't function without geometry shaders
+    if(!deviceFeatures.geometryShader) {
+        return 0;
+    }
+
+    int deviceScore {};
+
+    // Maximum possible size of textures affects graphics quality
+    deviceScore += deviceProperties.limits.maxImageDimension2D;
+
+    // Discrete GPUs have a significant performance advantage
+    if(deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+        deviceScore += 1000;
+    }
+
+    return deviceScore;
 }
 
 // Check if the given device has any graphics queue and presentation queue, if there are no graphics queue and presentation queue then the device is not valid.
