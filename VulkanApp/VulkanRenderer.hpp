@@ -20,8 +20,8 @@ private:
     VkInstance instance;
 
     struct {
-        VkPhysicalDevice physicalDevice;
-        VkDevice logicalDevice;
+        VkPhysicalDevice physicalDevice {};
+        VkDevice logicalDevice {};
     } mainDevice;
 
     VkQueue graphicsQueue;
@@ -38,15 +38,15 @@ private:
 // support functions
     // checker functions
     
-    bool checkInstanceExtensionSupport(std::vector<const char *> *checkExtensions);     //invoked by createInstance
-    bool checkDeviceExtensionSupport(VkPhysicalDevice device);      //invoked by checkDeviceSuitable
-    bool checkDeviceSuitable(VkPhysicalDevice device);              //invoked by getPhysicalDevice
-
+    bool checkInstanceExtensionSupport(const std::vector<const char *> &checkExtensions);     //invoked by createInstance
+    bool checkDeviceExtensionSupport(VkPhysicalDevice device);      //invoked by isPhysicalDeviceSuitable
+    bool isPhysicalDeviceSuitable(VkPhysicalDevice device);         //invoked by getPhysicalDevice
+    int ratePhysicalDeviceSuitability(VkPhysicalDevice device);     //invoked by getPhysicalDevice
+    
     // getter functions
-
     void getPhysicalDevice();       //3rd call from init
-    QueueFamilyIndices getQueueFamillies(VkPhysicalDevice device);  //invoked by checkDeviceSuitable
-    SwapChainDetails getSwapChainDetails(VkPhysicalDevice device);  //invoked by checkDeviceSuitable
+    QueueFamilyIndices getQueueFamillies(VkPhysicalDevice device);  //invoked by isPhysicalDeviceSuitable
+    SwapChainDetails getSwapChainDetails(VkPhysicalDevice device);  //invoked by isPhysicalDeviceSuitable
 
     
 public:
