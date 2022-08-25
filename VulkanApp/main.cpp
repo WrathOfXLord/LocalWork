@@ -80,8 +80,8 @@ int main()
 
     // destroys vulkan instance
     vlknRenderer.cleanUp();
-    //  closes all glfw components
-    VulkanRenderer::terminateAll();
+    // //  closes all glfw components
+    // VulkanRenderer::terminateAll();
 
     t1.join();
     std::this_thread::sleep_for(1s);
