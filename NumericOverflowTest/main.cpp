@@ -2,10 +2,9 @@
 #include <limits>
 #include <iomanip>
 #include <bitset>
-#include "../BLUEPRINTS/timer_blueprint/TimeCounter.hpp"
 
 
-namespace My {
+namespace Custom {
     bool isInfinite(double val) {
         double sign {val < 0.0 ? -1.0: 1.0};
         return val * sign == 1.0/0.0;
@@ -61,11 +60,11 @@ int main()
     // std::cout << "var3: " << var3 << ", " << var3Bits.to_string() << "\n"
     //           << "typecasted version of var3: " << static_cast<size_t>(var3) << "\n";
     
-    if(My::isAdditionIntOverflow_Underflow(var3, var4)) {
+    if(Custom::isAdditionIntOverflow_Underflow(var3, var4)) {
         std::cout << "hit an overflow or underflow\n";
     }
 
-    if(My::isAdditionU_IntOverflow_Underflow(var, var2)) {
+    if(Custom::isAdditionU_IntOverflow_Underflow(var, var2)) {
         std::cout << "hit an overflow or underflow\n";
     }
 
