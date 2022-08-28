@@ -18,13 +18,18 @@ struct QueueFamilyIndices {
 };
 
 // Structure that stores information about surface capabilities, surface formats and presentation modes for Swap Chain
-struct SwapChainDetails {
+struct SwapchainDetails {
     // Surface properties, e.g. image size/extent
     VkSurfaceCapabilitiesKHR surfaceCapabilities;
     // Surface image formats, e.g. RGBA and size of each color
     std::vector<VkSurfaceFormatKHR> surfaceFormats;
     // How images should be presented to screen
     std::vector<VkPresentModeKHR> presentationModes;
+};
+
+struct SwapchainImage {
+    VkImage image;
+    VkImageView imageView;
 };
 
 #endif

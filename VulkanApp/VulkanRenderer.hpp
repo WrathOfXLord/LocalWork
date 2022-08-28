@@ -19,24 +19,27 @@ private:
     Window window;
     // Vulkan Components
     VkInstance instance;
-
     struct {
         VkPhysicalDevice physicalDevice {};
         VkDevice logicalDevice {};
     } mainDevice;
-
     VkQueue graphicsQueue;
     VkQueue presentationQueue;
-
     VkSurfaceKHR surface;
     VkSwapchainKHR swapchain;
+    std::vector<SwapchainImage> swapchainImages;
+
+    // Utility
+    VkFormat swapchainImageFormat;
+    VkExtent2D swapchainExtent;
 
     // Vulkan helper functions
     // create Functions
-    void createInstance();      // 1st call from init
-    void createSurface();       // 2nd call from init
-    void createLogicalDevice(); // 4th call from init
-    void createSwapchain();
+    void createInstance();                      // 1st call from init
+    void createSurface();                       // 2nd call from init
+    void createLogicalDevice();                 // 4th call from init
+    void createSwapchain();                     // 5th call from init
+    void createSwapchainImagesAndImageViews();  // 6th call from init
 
     // --support functions
     // --checker functions
@@ -49,16 +52,24 @@ private:
     // --getter functions
     void getPhysicalDevice();                                      // 3rd call from init
     QueueFamilyIndices getQueueFamillies(VkPhysicalDevice device); // invoked by isPhysicalDeviceSuitable
-    SwapChainDetails getSwapChainDetails(VkPhysicalDevice device); // invoked by isPhysicalDeviceSuitable
+    SwapchainDetails getSwapchainDetails(VkPhysicalDevice device); // invoked by isPhysicalDeviceSuitable
 
     // --selector Functions
     VkSurfaceFormatKHR selectBestSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &formats);
     VkPresentModeKHR selectBestPresentationMode(const std::vector<VkPresentModeKHR> &presentationModes);
     VkExtent2D selectSwapExtent(const VkSurfaceCapabilitiesKHR &surfaceCapabilities);
 
+    // --Support Create Functions
+    VkImageView createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags);
+
+    // --Support Destroyer Functions
+    void destroySwapchainImageViews();
+
+
+
 public:
-    // VulkanRenderer();
-    // ~VulkanRenderer();
+    VulkanRenderer() {}
+    // ~VulkanRenderer() ;
 
     void static terminateAll() { glfwTerminate(); }
     void cleanUp();

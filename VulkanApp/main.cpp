@@ -30,14 +30,14 @@ static AllocationStats memStats{};
 
 void *operator new(std::size_t size)
 {
-    // std::cout << "Allocated " << size << " bytes of memory.\n";
+    std::cout << "Allocated " << size << " bytes of memory.\n";
     memStats.allocated += size;
     return std::malloc(size);
 }
 
 void operator delete(void *memory, std::size_t size)
 {
-    // std::cout << "Released " << size << " bytes of memory.\n";
+    std::cout << "Released " << size << " bytes of memory.\n";
     memStats.released += size;
     std::free(memory);
 }
@@ -52,38 +52,40 @@ void operator delete[](void *memory, std::size_t size)
 
 int main()
 {
-    VulkanRenderer vlknRenderer;
-
-    if (vlknRenderer.init(500, 500, "Vulkan App") != 0)
-        return EXIT_FAILURE;
-
-
-    // memory usage status
-    bool isClosed{};
-    std::thread t1{[&isClosed]() {
-        do {
-            std::cout << memStats << "\n";
-            std::this_thread::sleep_for(1000ms);
-        } while (!isClosed);
-    }};
-
-    try
     {
-        vlknRenderer.run();
-        isClosed = true;
-    }
-    catch (const std::exception &ex)
-    {
-        std::cerr << ex.what() << "\n";
-        return EXIT_FAILURE;
-    }
+        VulkanRenderer vlknRenderer;
 
-    // destroys vulkan instance
-    vlknRenderer.cleanUp();
-    // //  closes all glfw components
-    // VulkanRenderer::terminateAll();
+        if (vlknRenderer.init(500, 500, "Vulkan App") != 0)
+            return EXIT_FAILURE;
 
-    t1.join();
+
+        // memory usage status
+        bool isClosed{};
+        std::thread t1{[&isClosed]() {
+            do {
+                std::cout << memStats << "\n";
+                std::this_thread::sleep_for(1000ms);
+            } while (!isClosed);
+        }};
+
+        try
+        {
+            vlknRenderer.run();
+            isClosed = true;
+        }
+        catch (const std::exception &ex)
+        {
+            std::cerr << ex.what() << "\n";
+            return EXIT_FAILURE;
+        }
+
+        // destroys vulkan instance
+        vlknRenderer.cleanUp();
+        // //  closes all glfw components
+        // VulkanRenderer::terminateAll();
+
+        t1.join();
+    }
     std::this_thread::sleep_for(1s);
     std::cout << memStats << "\n";
     return EXIT_SUCCESS;
