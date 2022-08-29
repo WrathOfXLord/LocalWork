@@ -16,7 +16,7 @@ int VulkanRenderer::init(const int w, const int h, const std::string_view &title
         getPhysicalDevice();
         createLogicalDevice();
         createSwapchain();
-        createSwapchainImagesAndImageViews();
+        swapchainRetrieveImagesAndCreateImageViews();
     }
     catch (const std::runtime_error &err)
     {
@@ -336,6 +336,8 @@ void VulkanRenderer::createLogicalDevice()
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos(queueFamilyIndices.size());
 
     {
+        // Vulkan needs to know how to handle multiple queues so decide priority (1 - highest, 0 - lowest)
+        float priority{1.0};
         size_t setIndex{};
         // Queue the logical device needs to create and info to do so
         for (int queueFamilyIndex : queueFamilyIndices)
@@ -346,7 +348,6 @@ void VulkanRenderer::createLogicalDevice()
             queueCreateInfo.queueFamilyIndex = queueFamilyIndex;
             // number of the queues to create
             queueCreateInfo.queueCount = 1;
-            float priority{1.0};
             // Vulkan needs to know how to handle multiple queues so decide priority (1 - highest, 0 - lowest)
             queueCreateInfo.pQueuePriorities = &priority;
             queueCreateInfos[setIndex++] = queueCreateInfo;
@@ -444,7 +445,7 @@ void VulkanRenderer::createSwapchain()
     // 2. choose best presentation mode
     VkPresentModeKHR presentationMode{selectBestPresentationMode(swapchainDetails.presentationModes)};
     // 3. choose swapchain image resolution/extent
-    VkExtent2D extent{selectSwapExtent(swapchainDetails.surfaceCapabilities)};
+    VkExtent2D selectedExtent{selectSwapExtent(swapchainDetails.surfaceCapabilities)};
 
     // How many images are in the swap chain?
     // Get 1 more than the minimum to allow triple buffering
@@ -452,7 +453,7 @@ void VulkanRenderer::createSwapchain()
 
     // if imageCount higher than max, then clamp down to max
     // maxImageCount > 0 means no limit for image count
-    // so check it before if it is greater than 0
+    // 0 is a special value that means that there is no maximum
     if (swapchainDetails.surfaceCapabilities.maxImageCount > 0 && swapchainDetails.surfaceCapabilities.maxImageCount < imageCount)
     {
         imageCount = swapchainDetails.surfaceCapabilities.maxImageCount;
@@ -465,11 +466,19 @@ void VulkanRenderer::createSwapchain()
     swapchainCreationInfo.imageFormat = surfaceFormat.format;                                   // Swapchain format
     swapchainCreationInfo.imageColorSpace = surfaceFormat.colorSpace;                           // Swapchain colorspace
     swapchainCreationInfo.presentMode = presentationMode;                                       // Swapchain presentation mode
-    swapchainCreationInfo.imageExtent = extent;                                                 // Swapchain image extent
+    swapchainCreationInfo.imageExtent = selectedExtent;                                         // Swapchain image extent
     swapchainCreationInfo.minImageCount = imageCount;                                           // Minimum image in swapchain
+    
+    // The imageArrayLayers specifies the amount of layers each image consists of. This is always 1 unless you are developing a stereoscopic 3D application.
     swapchainCreationInfo.imageArrayLayers = 1;                                                 // Number of layers for each image in swapchain
     swapchainCreationInfo.imageUsage = VK_IMAGE_USAGE_COLOR_ATTACHMENT_BIT;                     // What attachment images will be used as
+
+    // We can specify that a certain transform should be applied to images in the swap chain if it is supported (supportedTransforms in capabilities), 
+    // like a 90 degree clockwise rotation or horizontal flip. To specify that you do not want any transformation, simply specify the current transformation.
     swapchainCreationInfo.preTransform = swapchainDetails.surfaceCapabilities.currentTransform; // Transform to perform on swapchain images
+    
+    // The compositeAlpha field specifies if the alpha channel should be used for blending with other windows in the window system. 
+    // You'll almost always want to simply ignore the alpha channel, hence
     swapchainCreationInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;                   // How to handle blanding images with external graphics (other windows etc.)
     swapchainCreationInfo.clipped = VK_TRUE;                                                    // Whether to clip parts of image not in the view (e.g. behind another window)
 
@@ -502,24 +511,28 @@ void VulkanRenderer::createSwapchain()
 
     // Store for later reference
     swapchainImageFormat = surfaceFormat.format;
-    swapchainExtent = extent;
+    swapchainExtent = selectedExtent;
 }
 
-void VulkanRenderer::createSwapchainImagesAndImageViews() {
+void VulkanRenderer::swapchainRetrieveImagesAndCreateImageViews() {
     uint32_t swapchainImageCount;
     vkGetSwapchainImagesKHR(mainDevice.logicalDevice, swapchain, &swapchainImageCount, nullptr);
     std::vector<VkImage> images (swapchainImageCount);
     vkGetSwapchainImagesKHR(mainDevice.logicalDevice, swapchain, &swapchainImageCount, images.data());
-
+    // imageview count = image count
+    swapchainImages.resize(swapchainImageCount);
+    uint64_t index {};
     // VkImage is a pointer type no need to use reference
     for(VkImage image:images) {
         // Store image handle
         // Add to swapchain image list
-        swapchainImages.push_back(SwapchainImage {
+        swapchainImages[index++] = SwapchainImage {
             image,                                                                      //image
             createImageView(image, swapchainImageFormat, VK_IMAGE_ASPECT_COLOR_BIT)     //imageView
-        });
+        };
     }
+    // // debug line
+    // std::cout << "vector sizes are " << ((swapchainImages.size() == images.size())? "equal\n" : "not equal\n");
 }
 
 // Best format is subjective but ours will be:
@@ -578,7 +591,14 @@ VkExtent2D VulkanRenderer::selectSwapExtent(const VkSurfaceCapabilitiesKHR &surf
 
     // otherwise, it is size of the window.
     int width, height;
-    // framebuffer size have the same size as the window
+    // GLFW uses two units when measuring sizes: pixels and screen coordinates. 
+    // For example, the resolution {WIDTH, HEIGHT} that we specified earlier 
+    // when creating the window is measured in screen coordinates. 
+    // But Vulkan works with pixels, so the swap chain extent must be specified in pixels as well. 
+    // Unfortunately, if you are using a high DPI display (like Apple's Retina display), screen coordinates don't correspond to pixels. 
+    // Instead, due to the higher pixel density, the resolution of the window in pixel will be larger than the resolution in screen coordinates. 
+    // So if Vulkan doesn't fix the swap extent for us, we can't just use the original {WIDTH, HEIGHT}. 
+    // Instead, we must use glfwGetFramebufferSize to query the resolution of the window in pixel before matching it against the minimum and maximum image extent.
     glfwGetFramebufferSize(window.getWindow(), &width, &height);
 
     // Create new extent using window size
@@ -595,7 +615,7 @@ VkExtent2D VulkanRenderer::selectSwapExtent(const VkSurfaceCapabilitiesKHR &surf
     return newExtent;
 }
 
-
+// Create image view for each image in the swapchain
 VkImageView VulkanRenderer::createImageView(VkImage image, VkFormat format, VkImageAspectFlags aspectFlags) {
     VkImageViewCreateInfo viewCreationInfo {};
     viewCreationInfo.sType = VK_STRUCTURE_TYPE_IMAGE_VIEW_CREATE_INFO;
@@ -607,8 +627,13 @@ VkImageView VulkanRenderer::createImageView(VkImage image, VkFormat format, VkIm
     viewCreationInfo.components.b = VK_COMPONENT_SWIZZLE_IDENTITY;      // 
     viewCreationInfo.components.a = VK_COMPONENT_SWIZZLE_IDENTITY;      // 
 
-    // Subresources allow the view to view only a part of an image
-    viewCreationInfo.subresourceRange.aspectMask = aspectFlags;         // Which aspect of image to view (e.g. COLOR_BIT for viewing color)
+    // The subresourceRange field describes what the image's purpose is 
+    // and which part of the image should be accessed. 
+    // Our images will be used as color targets without any mipmapping levels or multiple layers.
+    // If we were working on a stereographic 3D application, then we would create a swap chain with multiple layers. 
+    // We could then create multiple image views 
+    // for each image representing the views for the left and right eyes by accessing different layers.
+    viewCreationInfo.subresourceRange.aspectMask = aspectFlags;         // Which aspect of image to view (e.g. COLOR_BIT for viewing color), VK_IMAGE_ASPECT_COLOR_BIT in this case
     viewCreationInfo.subresourceRange.baseMipLevel = 0;                 // Start mipmap level to view from
     viewCreationInfo.subresourceRange.levelCount = 1;                   // Number of mipmap levels to view
     viewCreationInfo.subresourceRange.baseArrayLayer = 0;               // Start array level to view from

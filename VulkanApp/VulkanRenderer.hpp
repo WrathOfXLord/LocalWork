@@ -35,11 +35,11 @@ private:
 
     // Vulkan helper functions
     // create Functions
-    void createInstance();                      // 1st call from init
-    void createSurface();                       // 2nd call from init
-    void createLogicalDevice();                 // 4th call from init
-    void createSwapchain();                     // 5th call from init
-    void createSwapchainImagesAndImageViews();  // 6th call from init
+    void createInstance();                              // 1st call from init
+    void createSurface();                               // 2nd call from init
+    void createLogicalDevice();                         // 4th call from init
+    void createSwapchain();                             // 5th call from init
+    void swapchainRetrieveImagesAndCreateImageViews();  // 6th call from init
 
     // --support functions
     // --checker functions
