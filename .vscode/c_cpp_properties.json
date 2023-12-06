@@ -5,22 +5,31 @@
             "includePath": [
                 "${workspaceFolder}/**",
                 "C:/msys64/mingw64/include/**",
-                "C:/fast_io-master-cpp/include",
-                "C:/imgui-docking"
+                "D:/fast_io-master-cpp/include",
+                "D:/imgui-docking",
+                "C:\\Repository\\C++\\Vortex\\Vortex\\ext\\spdlog\\include",
+                "C:\\Repository\\C++\\Vortex\\Vortex\\src"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
-                "_UNICODE"
+                "_UNICODE",
+                "VT_PLATFORM_WINDOWS",
+                "VT_BUILD_DLL"
             ],
             "windowsSdkVersion": "10.0.18362.0",
             "compilerPath": "C:/msys64/mingw64/bin/g++.exe",
             "cStandard": "c17",
-            "cppStandard": "c++20",
+            "cppStandard": "c++23",
             "intelliSenseMode": "windows-gcc-x64",
             "compilerArgs": [
-                "-Wall",
-                "-std=c++20"
+                "-Wextra",
+                "-Werror",
+                "-Wpessimizing-move",
+                "-std=c++23",
+                "-fmodules-ts",
+                "-fmodule-header",
+                "-Wattributes"
             ]
         }
     ],

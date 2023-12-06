@@ -2,12 +2,14 @@
     "tasks": [
         {
             "type": "cppbuild",
-            "label": "Vulkan MinGWx64 Task",
+            "label": "MinGW x64 Task",
             "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
             "args": [
                 "-g",
                 "-Wextra",
-                "-std=c++2a",
+                "-Werror",
+                "-Wpessimizing-move",
+                "-std=c++23",
                 "-Og",
                 "-m64",
                 "${fileDirname}\\*.cpp",
@@ -26,7 +28,34 @@
                 "kind": "build",
                 "isDefault": true
             },
-            "detail": "Vulkan MinGWx64 Compiler."
+            "detail": "MinGW x64 Task"
+        },
+        {
+            "type": "cppbuild",
+            "label": "MinGW x64 Full Task",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "-Wextra",
+                "-std=c++2a",
+                "-Og",
+                "-m64",
+                "${fileDirname}\\*\\*.cpp",
+                "-o",
+                "\\x64\\bin\\${relativeFileDirname}.exe",
+                // "-lglfw3",
+                // "-lvulkan"
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": {
+                "kind": "build"
+            },
+            "detail": "MinGW Full x64 Task"
         },
         {
             "type": "cppbuild",
@@ -101,7 +130,7 @@
                 "-IC:\\imgui-docking",
                 // "-IC:\\imgui-docking\\backends",
                 // vulkan files
-                "-IC:\\VulkanSDK\\1.3.204.0\\Include\\vulkan",
+                "-IC:\\VulkanSDK\\1.3.224.0\\Include\\vulkan",
                 "${fileDirname}\\*.cpp",
                 // //imgui source files
                 // "C:\\imgui-docking\\backends\\imgui_impl_dx11.cpp",
@@ -112,7 +141,7 @@
                 "-o",
                 "${relativeFileDirname}.exe",
                 // vulkan lib files
-                "-LC:\\VulkanSDK\\1.3.204.0\\lib",
+                "-LC:\\VulkanSDK\\1.3.224.0\\lib",
                 "-lvulkan-1",
                 "-lglfw3",
                 //dx11 libs
@@ -127,6 +156,35 @@
             ],
             "group": "build",
             "detail": "ImGUI-Vulkan Mingw64 Compilation"
+        },
+        {
+            "type": "cppbuild",
+            "label": "Vulkan Mingw64 Compilation",
+            "command": "C:\\msys64\\mingw64\\bin\\g++.exe",
+            "args": [
+                "-g",
+                "-Wall",
+                "-std=c++2a",
+                "-Og",
+                "-m64",
+                // vulkan files
+                "-IC:\\VulkanSDK\\1.3.224.0\\Include\\vulkan",
+                "${fileDirname}\\*.cpp",
+                "-o",
+                "${relativeFileDirname}.exe",
+                // vulkan lib files
+                "-LC:\\VulkanSDK\\1.3.224.0\\lib",
+                "-lvulkan-1",
+                "-lglfw3",
+            ],
+            "options": {
+                "cwd": "${fileDirname}"
+            },
+            "problemMatcher": [
+                "$gcc"
+            ],
+            "group": "build",
+            "detail": "Vulkan Mingw64 Compilation"
         },
         {
             "type": "cppbuild",
@@ -152,22 +210,27 @@
             "command": "g++.exe",
             "args": [
                 "-g",
+                "-Wall",
                 "-Wextra",
-                "-std=c++2a",
+                "-Werror",
+                "-Wpedantic",
+                "-Wattributes",
+                "-Wformat-security",
+                "-Wpessimizing-move",
+                "-std=c++23",
+                "-fsanitize=undefined",
+                "-fsanitize-undefined-trap-on-error",
+                // "-fmodules-ts",
+                // "-fmodule-header",
                 "-Og",
                 // "-Wimplicit-fallthrough",
-                // "-m64",
-                // //vulkan location
-                // "-IC:\\VulkanSDK\\1.3.204.0\\Include\\vulkan",
+                "-m64",
                 // set stack size from 2 to 16 MiB
                 // "-Wl,-stack,16777216",
                 "${fileDirname}\\*.cpp",
                 // "${fileDirname}\\*.c",
                 "-o",
-                "${relativeFileDirname}.exe",             
-                // "-lglfw3",
-                // "-LC:\\VulkanSDK\\1.3.204.0\\lib",
-                // "-lvulkan-1",
+                "${relativeFileDirname}.exe",
             ],
             "options": {
                 "cwd": "${fileDirname}"

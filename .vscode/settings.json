@@ -1,5 +1,6 @@
 {
     "files.associations": {
+        "*.jsx": "javascriptreact",
         "array": "cpp",
         "chrono": "cpp",
         "compare": "cpp",
@@ -98,6 +99,11 @@
         "cinttypes": "cpp",
         "*.inc": "cpp",
         "*.def": "cpp",
-        "version": "cpp"
-    }
+        "version": "cpp",
+        "cfenv": "cpp",
+        "cassert": "cpp",
+        "regex": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "enabled",
+    "cmake.sourceDirectory": "C:/Repository/C++/Vortex"
 }
