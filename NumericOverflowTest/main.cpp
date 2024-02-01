@@ -2,6 +2,7 @@
 #include <limits>
 #include <iomanip>
 #include <bitset>
+#include <cstdint>
 
 
 namespace Custom {
@@ -49,7 +50,7 @@ namespace Custom {
             return true;
         }
         return false;
-    }
+    }    
 }
 
 int main()
