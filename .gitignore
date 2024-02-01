@@ -22,3 +22,7 @@
 # some other test locals
 **/RSATest
 **/ConsoleSnake
+**/VorteX
+**/CmakeDllTest
+**/ConanTest
+**/TestCmake

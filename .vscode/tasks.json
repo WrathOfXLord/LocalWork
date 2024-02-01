@@ -205,6 +205,54 @@
             "detail": "Visual C++ Compiler."
         },
         {
+            "label": "Assemble (NASM)",
+            "type": "shell",
+            "command": "nasm",
+            "args": ["-f", "win64", "${file}"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "detail": "NASM Win64 Assembler"
+        },
+        {
+            "label": "Assemble (YASM)",
+            "type": "shell",
+            "command": "yasm",
+            "args": [
+                "-f",
+                "win64",
+                "-g",
+                "cv8",
+                "-o",
+                "${fileDirname}\\${relativeFileDirname}.obj",
+                "${file}"
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "presentation": {
+                "reveal": "silent",
+                "panel": "new"
+            },
+            "detail": "YASM Win64 Assembler"
+        },
+        {
+            "label": "Link",
+            "type": "shell",
+            "command": "g++.exe",
+            "args": [
+                "-m64",
+                "-g",
+                "${fileDirname}\\*.obj",
+                "${fileDirname}\\*.cpp",  // Add other source files if needed
+                "-o",
+                "${fileDirname}\\${relativeFileDirname}.exe"
+            ],
+            "detail": "g++ assembly/object linker"
+        },
+        {
             "type": "cppbuild",
             "label": "C/C++: g++.exe Build Active Folder",
             "command": "g++.exe",
@@ -222,7 +270,7 @@
                 "-fsanitize-undefined-trap-on-error",
                 // "-fmodules-ts",
                 // "-fmodule-header",
-                "-Og",
+                "-O0",
                 // "-Wimplicit-fallthrough",
                 "-m64",
                 // set stack size from 2 to 16 MiB
@@ -231,6 +279,7 @@
                 // "${fileDirname}\\*.c",
                 "-o",
                 "${relativeFileDirname}.exe",
+                "-latomic"
             ],
             "options": {
                 "cwd": "${fileDirname}"
@@ -239,7 +288,7 @@
                 "$gcc"
             ],
             "group": "build",
-            "detail": "MinGWx64 Compiler"
+            "detail": "Strict MinGWx64 Compiler"
         }
     ],
     "version": "2.0.0"

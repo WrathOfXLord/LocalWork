@@ -40,6 +40,26 @@
                 }
             ],
             "preLaunchTask": "C/C++: g++.exe Build Active Folder"
+        },
+        {
+            "name": "C++ Debug (No Build)",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${fileDirname}\\${relativeFileDirname}.exe",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${fileDirname}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "miDebuggerPath": "C:\\msys64\\mingw64\\bin\\gdb.exe",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
         }
     ]
 }
