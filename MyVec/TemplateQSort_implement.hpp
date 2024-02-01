@@ -65,7 +65,7 @@ void QSort(MyTemplateVec<Type> &dataset, int64 start_point, int64 end_point)
      if(start_point < end_point)
      {
         int64 pivot {randPivotIndex(dataset, start_point, end_point)};
-        QSort(dataset, start_point, pivot - 1);     //exclude pivot point, it's been already placed with pivotindex, if you include you will run into recursive loop
+        QSort(dataset, start_point, pivot - 1);     //exclude pivot point, it's already been placed with pivotindex, if you include you will run into recursive loop
         QSort(dataset, pivot + 1, end_point);
      }
 }
