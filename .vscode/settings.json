@@ -102,7 +102,9 @@
         "version": "cpp",
         "cfenv": "cpp",
         "cassert": "cpp",
-        "regex": "cpp"
+        "regex": "cpp",
+        "print": "cpp",
+        "text_encoding": "cpp"
     },
     "C_Cpp.errorSquiggles": "enabled",
     "cmake.sourceDirectory": "C:/Repository/C++/Vortex"
