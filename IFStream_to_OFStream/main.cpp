@@ -11,7 +11,7 @@ int main()
     
     std::ifstream readFrom {filename + ".txt", std::ios::in};
     std::string output {filename + "_out.txt"};
-    std::ofstream readInto {output, std::ios::out | std::ios::ate};
+    std::ofstream readInto {output, std::ios::out | std::ios::app};
 
     std::string read {};
     while(std::getline(readFrom, read))

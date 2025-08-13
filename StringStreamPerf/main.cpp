@@ -55,28 +55,28 @@ void clearConsoleInput()
 // }
 
 
-// void setVarByInputAndValidateSS(size_t &var)
-// {
-//     std::string buffer;
-//     std::cout << "str buffer has been created\n";
-//     buffer.reserve(20);
-//     std::cout << "reserved 20 chars for buffer\n";
-//     bool done {};
-//     do {
-//         std::cout << "Please enter an integer value: ";
-//         std::cin >> std::setw(19) >> buffer;
+void setVarByInputAndValidateSS(size_t &var)
+{
+    std::string buffer;
+    std::cout << "str buffer has been created\n";
+    buffer.reserve(20);
+    std::cout << "reserved 20 chars for buffer\n";
+    bool done {};
+    do {
+        std::cout << "Please enter an integer value: ";
+        std::cin >> std::setw(19) >> buffer;
 
-//         TimeCounter t;
-//         std::stringstream ss {buffer};
-//         if(ss >> var) {
-//             t.timedelta();
-//             done = true;
-//             std::cout << "value: " << var << "\n";
-//         }
-//         clearConsoleInput();
-//     } while(!done);
+        TimeCounter t;
+        std::stringstream ss {buffer};
+        if(ss >> var) {
+            t.timedelta();
+            done = true;
+            std::cout << "value: " << var << "\n";
+        }
+        clearConsoleInput();
+    } while(!done);
 
-// }
+}
 
 void validateInputUsingCustomAtoLL(int64_t &var) {
     var = 0;

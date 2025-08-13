@@ -33,7 +33,7 @@ double simpsonRule(double lower, double upper, int splitCount, double (*f)(doubl
 int main()
 {
     timer t1 {std::chrono::high_resolution_clock::now()};
-    cout << "integral of e^(-x^2) with -100 - 100 boundaries : " << setprecision(11) << simpsonRule(-100, 100, 100'000, *fx) << endl;
+    cout << "integral of e^(-x^2) with -100 - 100 boundaries : " << setprecision(11) << simpsonRule(-100, 100, 100'000, fx) << endl;
     timer t2 {std::chrono::high_resolution_clock::now()};
 
     std::chrono::duration<double> elapsedTime {std::chrono::duration_cast<std::chrono::duration<double>>(t2 - t1)};

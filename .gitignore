@@ -26,3 +26,8 @@
 **/CmakeDllTest
 **/ConanTest
 **/TestCmake
+
+build/**
+
+*.pdf
+*.zip

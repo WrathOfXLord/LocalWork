@@ -60,7 +60,8 @@ public:
     // data, start index, data size
     static void quicksort(type *dataset, int64_t start, int64_t size, bool useIterator = false)
     {
-        Sort::sortByIndex(dataset, start, size - 1);
+        if(!useIterator)
+            Sort::sortByIndex(dataset, start, size - 1);
     }
 };
 

@@ -13,11 +13,11 @@ using std::string;
 
 class Player {
 private:
-    unsigned int health;
-    unsigned int age;
     string name;
     size_t xp;
     static size_t playerCount;
+    unsigned int health;
+    unsigned int age;
 public:
     //implicitly inline methods, because we are defining them inside class declaration
     //inline methods are small optimized methods

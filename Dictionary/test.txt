@@ -1,0 +1,2 @@
+Elapsed time: 11600 nanoseconds
+Elapsed time: 20900 nanoseconds

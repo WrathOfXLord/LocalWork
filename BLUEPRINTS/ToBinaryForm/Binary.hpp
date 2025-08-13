@@ -3,6 +3,9 @@
 
 #include <iostream>
 #include <bitset>
+#include <cstring>
+
+#define BITS_PER_BYTE 8
 namespace Binary {
     std::string fromString(const std::string &str);
     std::string fromFloatingPointType(std::floating_point auto value);
@@ -10,6 +13,7 @@ namespace Binary {
     bool checkIfLittleEndian();
 }
 
+// might cause UB use carefully
 bool Binary::checkIfLittleEndian() {
     uint16_t val {0x1};
     // if the little part is being used first then machine is little endian
@@ -21,7 +25,6 @@ bool Binary::checkIfLittleEndian() {
 std::string Binary::fromString(const std::string &str) {
     if(str.size() == 0)
         return {};
-    const size_t BITS_PER_BYTE {8};
     std::string binaryForm {};
     binaryForm.resize(str.size() * (sizeof(uint8_t) * 8 + 1));
     // std::cout << "size: " << binaryForm.size() << "\n";

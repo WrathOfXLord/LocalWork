@@ -71,8 +71,6 @@ void VulkanRenderer::createInstance()
     // pointer to application info struct
     createInfo.pApplicationInfo = &appInfo;
 
-    // Create list to hold instance extensions
-    std::vector<const char *> instanceExtensions{};
     // Set up extensions instance will use. GLFW may require multiple extensions
     uint32_t glfwExtensionCount{0};
     // Extensions passed as array of c-strings, so need pointer (the array) to pointer (c-strings)
@@ -81,10 +79,13 @@ void VulkanRenderer::createInstance()
     // Get GLFW Extensions and Count
     glfwExtensions = glfwGetRequiredInstanceExtensions(&glfwExtensionCount);
 
+    // Create list to hold instance extensions
+    std::vector<const char *> instanceExtensions(glfwExtensionCount);
+
     // Add GLFW Extensions to list of extensions
     for (size_t e{}; e < glfwExtensionCount; ++e)
     {
-        instanceExtensions.push_back(glfwExtensions[e]);
+        instanceExtensions[e] = glfwExtensions[e];
     }
 
     // Check instance extensions supported
